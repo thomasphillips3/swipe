@@ -43,12 +43,11 @@ export class Deck extends Component{
     }
 
     forceSwipe(swipeDirection) {
-        let direction = 1;
+        const x = swipeDirection === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
         console.log(swipeDirection);
-        if (swipeDirection === 'left') direction*=-1;
-        
+
         Animated.timing(this.state.position, {
-            toValue: { x: SCREEN_WIDTH * direction, y: 0 },
+            toValue: { x, y: 0 },
             duration: DURATION
         }).start();
     }
