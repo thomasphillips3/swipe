@@ -19,11 +19,13 @@ export class Deck extends Component{
             onPanResponderMove: (event, gesture) => {
                 position.setValue({ x: gesture.dx, y: gesture.dy })
             }, 
-            onPanResponderRelease: () => {}
+            onPanResponderRelease: () => {
+                this.snapBackToOrigin();
+            }
          });
-
+         
          this.state = { panResponder, position };
-    }
+        }
 
     render() {
         return (
@@ -31,6 +33,12 @@ export class Deck extends Component{
                 {this.renderCards()}
             </View>
         );
+    }
+
+    snapBackToOrigin() {
+        Animated.spring(this.state.position, { 
+            toValue: { x: 0, y: 0 }
+        }).start();
     }
 
     getCardStyle() {
