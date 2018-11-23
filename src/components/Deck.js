@@ -11,7 +11,12 @@ const SWIPE_THRESHOLD = SCREEN_WIDTH/3;
 const MULTIPLIER = 1.5;
 const DURATION = 250;
 
-export class Deck extends Component{
+export class Deck extends Component {
+    static defaultProps = {
+        onSwipeRight: () => {},
+        onSwipeLeft: () => {}
+    }
+
     constructor(props) {
         super(props);
 
@@ -31,7 +36,7 @@ export class Deck extends Component{
                 }
             }
          });
-         this.state = { panResponder, position };
+         this.state = { panResponder, position, index: 0 };
         }
 
     render() {
@@ -44,12 +49,22 @@ export class Deck extends Component{
 
     forceSwipe(swipeDirection) {
         const x = swipeDirection === 'right' ? SCREEN_WIDTH : -SCREEN_WIDTH;
-        console.log(swipeDirection);
 
         Animated.timing(this.state.position, {
             toValue: { x, y: 0 },
             duration: DURATION
-        }).start();
+        }).start(() => {
+            this.onSwipeComplete(swipeDirection);
+        });
+    }
+
+    onSwipeComplete(swipeDirection) {
+        const { onSwipeLeft, onSwipeRight, data } = this.props;
+        const item = data[this.state.index];
+
+        swipeDirection === 'right' ? onSwipeRight(item) : onSwipeLeft(item);
+        this.state.position.setValue({ x: 0, y: 0 });
+        this.setState({ index: this.state.index + 1 });
     }
 
     snapBackToOrigin() {
@@ -72,8 +87,12 @@ export class Deck extends Component{
     }
 
     renderCards() {
-        return this.props.data.map((item, index) => {
-            if (index === 0) {
+        return this.props.data.map((item, i) => {
+            if (i < this.state.index) {
+                return null;
+            }
+
+            if (i === this.state.index) {
                 return (
                     <Animated.View 
                         key={item.id}
@@ -84,7 +103,7 @@ export class Deck extends Component{
                     </Animated.View>
                 );
             }
-            
+
             return this.props.renderCard(item);
         });
     }
