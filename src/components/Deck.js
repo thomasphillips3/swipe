@@ -49,6 +49,11 @@ export class Deck extends Component {
             </View>
         );
     }
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.data !== this.props.data) {
+            this.setState({ index: 0 });
+        }
+    }
 
     componentWillUpdate() {
         if (Platform.os === 'android') 
