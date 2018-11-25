@@ -99,7 +99,7 @@ export class Deck extends Component {
                 return (
                     <Animated.View 
                         key={item.id}
-                        style={this.getCardStyle()}
+                        style={[this.getCardStyle(), styles.cardStyle]}
                         {...this.state.panResponder.panHandlers} 
                     >
                         {this.props.renderCard(item)}
@@ -107,9 +107,21 @@ export class Deck extends Component {
                 );
             }
 
-            return this.props.renderCard(item);
-        });
+            return (
+                <View key={item.id} style={styles.cardStyle}>
+                    {this.props.renderCard(item)}
+                </View>
+            );
+        }).reverse();
     }
 }
+
+const styles = {
+    cardStyle: {
+        position: 'absolute',
+        width: SCREEN_WIDTH,
+        elevation: 4
+    }
+};
 
 export default Deck;
